@@ -43,7 +43,7 @@ class BST{
     }
     boolean isBSTUtil(tNode node, int min, int max){
         if(node == null) return true;
-        if(node.key <= min || node.key >= max) return true;
+        if(node.key <= min || node.key >= max) return false;
 
         return isBSTUtil(node.left, min, node.key) && isBSTUtil(node.right, node.key, max);
     }
@@ -134,6 +134,7 @@ public class tryBST {
                 tree.isBalance(1, maxValue);
             }
             long end = System.currentTimeMillis();
+            populate[i] = end - start;
 
             if(!tree.isBST()){
                 System.out.println("not BST");
@@ -158,3 +159,12 @@ public class tryBST {
     }
 
 }
+                "C:\Program Files\Java\jdk-20\bin\java.exe" "-javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2023.2.1\lib\idea_rt.jar=62388:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2023.2.1\bin" -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8 -classpath C:\Users\Cscience1\Desktop\17practical\out\production\untitled tryBST
+Test phase of n=7
+BST is not built
+even numbers removed
+
+final phase
+not BST
+
+Process finished with exit code 0
