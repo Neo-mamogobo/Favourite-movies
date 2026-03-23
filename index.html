@@ -1,37 +1,178 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title> promaths bootcamp</title>
-    </head>
-    <body style="background-color: black;">
-        <h1>This Is Gift's Favourite Movies</h1>
-        <h1 style="color: aliceblue;">frankenstein</h1>
-        <img src="images/Frankenstein_2025_film_poster.jpg" alt="movie title">
-        <p style="color: aliceblue;">Dr. Victor Frankenstein a brilliant but egolistical scientist, brings a creasure to life in a monstrous experiment that leads to the undoing of both the creator and his tragic creation.</p>
-        <br>
-        <a href="https://youtu.be/x--N03NO130?si=-_pg1MJFD6bIcdDb">movie trailer</a>
-        <br>
-        <a href="https://downloadwella.com/oiy3qikmort4/Frankenstein.(THENKIRI.COM).2025.WEBRip.DOWNLOADED.FROM.THENKIRI.COM.mkv.html">movie link</a>
-        <hr>
-        
-        <h1 style="color: aliceblue;">nosferatu</h1>
-        <img src="images/nosfareta.jpg" alt="movie title" width="400" height="400">
-        <p style="color: aliceblue;">A gothic tale of obsession between a hauted young woman and the terrifying vampire infatuated with her, causing untold horror in its wake.</p>
-        <br>
-        <a href="https://youtu.be/nulvWqYUM8k?si=25JCtzntRGNpmZZ3">movie trailer</a>
-        <br>
-        <a href="https://downloadwella.com/xcanyau0k414/_Nosferatu.2024.(NKIRI.COM).WEBRip.DOWNLOADED.FROM.NKIRI.COM.mkv.html">movie link</a>
-        <hr>
+// I used ChatGPT as a guide to understand the problem and structure the solution.
 
-        <h1 style="color: aliceblue;">Joker</h1>
-        <img src="images/Joker_(2019_film)_poster.jpg" alt="movie title">
-        <p style="color: aliceblue;">In Gotham City, mentally-troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime. This path brings him face-to-face with his alter-ego:"The Joker".</p>
-        <br>
-        <a href="https://youtu.be/zAGVQLHvwOY?si=xK11Z6v5ZEBVs6c6">movie trailer</a>
-        <br>
-        <a href="https://downloadwella.com/3ifmf8sf97dn/Joker.(NKIRI.COM).2019.BluRay.DOWNLOADED.FROM.NKIRI.COM.mkv.html">movie link</a>
-        <hr>
-    </body>
+import java.util.*;
 
-</html>
+class tNode {
+    int key;
+    tNode left, right;
+
+    public tNode(int item) {
+        key = item;
+        left = right = null;
+    }
+}
+
+class BST {
+    tNode root;
+
+    // Insert
+    tNode insertRec(tNode root, int key) {
+        if (root == null) {
+            root = new tNode(key);
+            return root;
+        }
+
+        if (key < root.key)
+            root.left = insertRec(root.left, key);
+        else if (key > root.key)
+            root.right = insertRec(root.right, key);
+
+        return root;
+    }
+
+    void insert(int key) {
+        root = insertRec(root, key);
+    }
+
+    // Delete
+    tNode deleteRec(tNode root, int key) {
+        if (root == null) return root;
+
+        if (key < root.key)
+            root.left = deleteRec(root.left, key);
+        else if (key > root.key)
+            root.right = deleteRec(root.right, key);
+        else {
+            // Node found
+            if (root.left == null)
+                return root.right;
+            else if (root.right == null)
+                return root.left;
+
+            // Node with two children
+            root.key = minValue(root.right);
+            root.right = deleteRec(root.right, root.key);
+        }
+
+        return root;
+    }
+
+    int minValue(tNode root) {
+        int min = root.key;
+        while (root.left != null) {
+            min = root.left.key;
+            root = root.left;
+        }
+        return min;
+    }
+
+    void delete(int key) {
+        root = deleteRec(root, key);
+    }
+
+    // Check if BST
+    boolean isBSTUtil(tNode node, int min, int max) {
+        if (node == null) return true;
+
+        if (node.key < min || node.key > max)
+            return false;
+
+        return isBSTUtil(node.left, min, node.key - 1) &&
+               isBSTUtil(node.right, node.key + 1, max);
+    }
+
+    boolean isBST() {
+        return isBSTUtil(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    // Remove even numbers
+    void removeEvens(int maxVal) {
+        for (int i = 2; i <= maxVal; i += 2) {
+            delete(i);
+        }
+    }
+}
+
+public class tryBST {
+
+    // Build balanced BST using middle strategy
+    static void buildBalanced(BST tree, int start, int end) {
+        if (start > end) return;
+
+        int mid = (start + end) / 2;
+        tree.insert(mid);
+
+        buildBalanced(tree, start, mid - 1);
+        buildBalanced(tree, mid + 1, end);
+    }
+
+    // Calculate average
+    static double average(long[] arr) {
+        double sum = 0;
+        for (long x : arr) sum += x;
+        return sum / arr.length;
+    }
+
+    // Calculate standard deviation
+    static double stdDev(long[] arr, double avg) {
+        double sum = 0;
+        for (long x : arr)
+            sum += Math.pow(x - avg, 2);
+        return Math.sqrt(sum / arr.length);
+    }
+
+    public static void main(String[] args) {
+
+        int n = 7;  // ⚠️ FIRST TEST SMALL (≤7)
+        int maxVal = (int)Math.pow(2, n) - 1;
+
+        int runs = 30;
+
+        long[] populateTimes = new long[runs];
+        long[] deleteTimes = new long[runs];
+
+        for (int i = 0; i < runs; i++) {
+
+            BST tree = new BST();
+
+            // Timing populate
+            long start = System.nanoTime();
+
+            buildBalanced(tree, 1, maxVal);
+
+            long end = System.nanoTime();
+            populateTimes[i] = (end - start) / 1_000_000;
+
+            // Check BST
+            if (!tree.isBST()) {
+                System.out.println("ERROR: Not a BST");
+                return;
+            }
+
+            // Timing delete evens
+            start = System.nanoTime();
+
+            tree.removeEvens(maxVal);
+
+            end = System.nanoTime();
+            deleteTimes[i] = (end - start) / 1_000_000;
+        }
+
+        double avgPop = average(populateTimes);
+        double stdPop = stdDev(populateTimes, avgPop);
+
+        double avgDel = average(deleteTimes);
+        double stdDel = stdDev(deleteTimes, avgDel);
+
+        // Output table
+        System.out.println("\nResults:");
+        System.out.println("---------------------------------------------------");
+        System.out.println("Method\t\tKeys\tAvg(ms)\tStdDev");
+        System.out.println("Populate\t" + maxVal + "\t" + avgPop + "\t" + stdPop);
+        System.out.println("Delete Evens\t" + maxVal + "\t" + avgDel + "\t" + stdDel);
+        System.out.println("---------------------------------------------------");
+
+        System.out.println("\nNOTE: First test with n ≤ 7 before using n = 20");
+    }
+}
 
